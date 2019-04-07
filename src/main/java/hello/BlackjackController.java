@@ -1,6 +1,8 @@
 package hello;
 
-import hello.blackjack.model.*;
+import hello.blackjack.model.BlackjackDTO;
+import hello.blackjack.model.MessageDTO;
+import hello.blackjack.model.Test;
 import hello.blackjack.view.CommandLineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,9 +28,12 @@ public class BlackjackController {
     }
 
     @GetMapping("/play")
-    public Play play() {
-        return new Play(commandLineInterface.play(), commandLineInterface.printUserState(),
-                commandLineInterface.printDealerState());
+    public BlackjackDTO play() {
+        String message = commandLineInterface.play();
+
+        String state = commandLineInterface.printUserState() + '\n' +
+                commandLineInterface.printDealerState();
+        return new BlackjackDTO(state, message);
     }
 
     @GetMapping("/more")
