@@ -1,19 +1,28 @@
 package hello.blackjack.model;
 
 public class BlackjackDTO extends MessageDTO {
-    private String state;
+    private String userState;
+    private String dealerState;
 
-    public BlackjackDTO(String state, String message) {
+    public BlackjackDTO(String message, String userState, String dealerState) {
         super(message);
-        this.state = state;
+        this.userState = userState;
+        this.dealerState = dealerState;
     }
 
-    public String getState() {
-        return state;
+    public String getUserState() {
+        return userState;
     }
 
-    public void setState(String state) {
-        this.state = state;
+    public void setUserState(String userState) {
+        this.userState = userState;
     }
 
+    public String getDealerState() {
+        return dealerState;
+    }
+
+    public void setDealerState(String dealerState) {
+        this.dealerState = dealerState;
+    }
 }

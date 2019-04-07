@@ -52,7 +52,7 @@ public class CommandLineService implements CommandLineInterface {
         String text = finishMessage(controller);
         execute(Command.STOP, controller);
         String state = printDealerState() + printUserState();
-        return new BlackjackDTO(state, text);
+        return new BlackjackDTO(text, printUserState(), printDealerState());
     }
 
     public BlackjackDTO play() {
@@ -63,10 +63,9 @@ public class CommandLineService implements CommandLineInterface {
         String text = "Console Blackjack application.\n" +
                 "Author: (Ulyana Hatsoieva)\n" +
                 "(C) 2019\n";
-        String state = printDealerState() + printUserState();
 
 
-        return new BlackjackDTO(state, text);
+        return new BlackjackDTO(text, printUserState(), printDealerState());
     }
 
     public BlackjackDTO more() {
@@ -77,9 +76,9 @@ public class CommandLineService implements CommandLineInterface {
         String state = printDealerState() + printUserState();
         if (Deck.costOf(myHand) > 21) {
             text = text + finishMessage(controller);
-            return new BlackjackDTO(state, text);
+            return new BlackjackDTO(text, printUserState(), printDealerState());
         }
-        return new BlackjackDTO(state, text);
+        return new BlackjackDTO(text, printUserState(), printDealerState());
     }
    /* public String getHand(){
 
