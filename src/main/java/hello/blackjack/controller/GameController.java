@@ -45,6 +45,9 @@ public class GameController {
      * @param shuffler shuffle interface
      */
     void newGame(Shuffler shuffler) {
+        deck.clear();
+        userHand.clear();
+        dealerHand.clear();
         deck = Deck.createDeck(8);
         shuffler.shuffle(deck);
         userHand.add(deck.get(0));
@@ -53,7 +56,6 @@ public class GameController {
         deck.remove(0);
         dealerHand.add(deck.get(0));
         deck.remove(0);
-
     }
 
     /**

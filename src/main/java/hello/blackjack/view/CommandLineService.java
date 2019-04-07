@@ -3,7 +3,9 @@ package hello.blackjack.view;
 
 import hello.blackjack.controller.Deck;
 import hello.blackjack.controller.GameController;
+import hello.blackjack.model.BlackjackDTO;
 import hello.blackjack.model.Card;
+import hello.blackjack.model.MessageDTO;
 import hello.blackjack.model.WinState;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +15,7 @@ import java.util.Scanner;
 
 
 @Service
-public class CommandLineService {
+public class CommandLineService implements CommandLineInterface {
 
     private static final String LOSE_MSG = "Sorry, today is not your day. You loose.";
     private static final String PUSH_MSG = "Push. Everybody has equal amount of points.";
@@ -44,15 +46,16 @@ public class CommandLineService {
         return text;
     }
 
-    public String stop() {
+    public BlackjackDTO stop() {
         GameController controller = GameController.getInstance();
         controller.requestStop();
-        String text = "Dealer turn: " + "\n" + printState(controller) + "\n" + finishMessage(controller);
+        String text = finishMessage(controller);
         execute(Command.STOP, controller);
-        return text;
+        String state = printDealerState() + printUserState();
+        return new BlackjackDTO(state, text);
     }
 
-    public String play() {
+    public BlackjackDTO play() {
         GameController controller = GameController.getInstance();
 
 
@@ -60,21 +63,23 @@ public class CommandLineService {
         String text = "Console Blackjack application.\n" +
                 "Author: (Ulyana Hatsoieva)\n" +
                 "(C) 2019\n";
+        String state = printDealerState() + printUserState();
 
 
-        return text;
+        return new BlackjackDTO(state, text);
     }
 
-    public String more() {
+    public BlackjackDTO more() {
         GameController controller = GameController.getInstance();
         controller.requestMore();
-        String text = printState(controller);
+        String text = "";
         List<Card> myHand = controller.getMyHand();
+        String state = printDealerState() + printUserState();
         if (Deck.costOf(myHand) > 21) {
             text = text + finishMessage(controller);
-            return text;
+            return new BlackjackDTO(state, text);
         }
-        return text;
+        return new BlackjackDTO(state, text);
     }
    /* public String getHand(){
 
@@ -203,13 +208,12 @@ public class CommandLineService {
         return WIN_MSG;
     }
 
-    public String help() {
-        String text = "Usage: \n" +
+    public MessageDTO help() {
+        return new MessageDTO("Usage: \n" +
                 "\thelp - prints this message\n" +
                 "\thit - requests one more card\n" +
                 "\tstand - I'm done - lets finish\n" +
-                "\texit - exits game";
-        return text;
+                "\texit - exits game");
     }
 
     private void getHelp() {
