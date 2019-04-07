@@ -1,16 +1,14 @@
 package hello.blackjack.model;
 
-import hello.blackjack.view.CommandLineService;
-
 public class BlackjackDTO {
     private String state;
-    private String finishMessage;
+    private String message;
     public BlackjackDTO() {
     }
 
-    public BlackjackDTO(String state, String finishMessage) {
+    public BlackjackDTO(String state, String message) {
         this.state = state;
-        this.finishMessage = finishMessage;
+        this.message = message;
     }
 
     public String getState() {
@@ -21,11 +19,11 @@ public class BlackjackDTO {
         this.state = state;
     }
 
-    public String getFinishMessage() {
-        return finishMessage;
+    public String getMessage() {
+        return message;
     }
 
-    public void setFinishMessage(String finishMessage) {
-        this.finishMessage = finishMessage;
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
