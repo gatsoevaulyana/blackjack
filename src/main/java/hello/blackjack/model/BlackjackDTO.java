@@ -1,28 +1,33 @@
 package hello.blackjack.model;
 
-public class BlackjackDTO extends MessageDTO {
-    private String userState;
-    private String dealerState;
+import java.util.List;
 
-    public BlackjackDTO(String message, String userState, String dealerState) {
+public class BlackjackDTO extends MessageDTO {
+    private List<Card> userState;
+
+    public BlackjackDTO(String message, List<Card> userState, List<Card> dealerState) {
         super(message);
         this.userState = userState;
         this.dealerState = dealerState;
     }
 
-    public String getUserState() {
+    public List<Card> getUserState() {
         return userState;
     }
 
-    public void setUserState(String userState) {
+    public void setUserState(List<Card> userState) {
         this.userState = userState;
     }
 
-    public String getDealerState() {
+    public List<Card> getDealerState() {
         return dealerState;
     }
 
-    public void setDealerState(String dealerState) {
+    public void setDealerState(List<Card> dealerState) {
         this.dealerState = dealerState;
     }
+
+    private List<Card> dealerState;
+
+
 }

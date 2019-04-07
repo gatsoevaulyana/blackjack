@@ -2,14 +2,14 @@ package hello.blackjack.model;
 
 public class Card {
 private Rank rank;
-private String value;
+    private String name;
 private int cost;
 private Suit suit;
     //add private fields!
 	public Card(Rank rank, Suit suit) {
         this.rank = rank;
         this.suit = suit;
-        this.value = rank.getValues();
+        this.name = rank.getValues();
         this.cost = rank.getCost();//implement me, please!
     }
 
@@ -19,7 +19,7 @@ private Suit suit;
 
     public String getValues(){
 
-            return this.value;
+        return this.name;
     }
 
 	public int getCost() {

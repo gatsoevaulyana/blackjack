@@ -51,8 +51,7 @@ public class CommandLineService implements CommandLineInterface {
         controller.requestStop();
         String text = finishMessage(controller);
         execute(Command.STOP, controller);
-        String state = printDealerState() + printUserState();
-        return new BlackjackDTO(text, printUserState(), printDealerState());
+        return new BlackjackDTO(text, getUserState(), getDealerState());
     }
 
     public BlackjackDTO play() {
@@ -65,7 +64,7 @@ public class CommandLineService implements CommandLineInterface {
                 "(C) 2019\n";
 
 
-        return new BlackjackDTO(text, printUserState(), printDealerState());
+        return new BlackjackDTO(text, getUserState(), getDealerState());
     }
 
     public BlackjackDTO more() {
@@ -73,12 +72,11 @@ public class CommandLineService implements CommandLineInterface {
         controller.requestMore();
         String text = "";
         List<Card> myHand = controller.getMyHand();
-        String state = printDealerState() + printUserState();
         if (Deck.costOf(myHand) > 21) {
             text = text + finishMessage(controller);
-            return new BlackjackDTO(text, printUserState(), printDealerState());
+            return new BlackjackDTO(text, getUserState(), getDealerState());
         }
-        return new BlackjackDTO(text, printUserState(), printDealerState());
+        return new BlackjackDTO(text, getUserState(), getDealerState());
     }
    /* public String getHand(){
 
@@ -244,17 +242,13 @@ public class CommandLineService implements CommandLineInterface {
         return text;
     }
 
-    public String printUserState() {
+    public List<Card> getUserState() {
         GameController controller = GameController.getInstance();
-        List<Card> myHand = controller.getMyHand();
-        String text = format(myHand);
-        return text;
+        return controller.getMyHand();
     }
 
-    public String printDealerState() {
+    public List<Card> getDealerState() {
         GameController controller = GameController.getInstance();
-        List<Card> dealersHand = controller.getDealersHand();
-        String text = format(dealersHand);
-        return text;
+        return controller.getDealersHand();
     }
 }
