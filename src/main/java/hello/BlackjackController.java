@@ -42,8 +42,8 @@ public class BlackjackController {
     }
 
     @GetMapping("/help")
-    public Help help() {
-        return new Help(commandLineInterface.help());
+    public MessageDTO help() {
+        return new MessageDTO(commandLineInterface.help());
     }
 
     @PostMapping(path = "/more")

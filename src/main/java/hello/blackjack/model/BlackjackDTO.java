@@ -1,14 +1,11 @@
 package hello.blackjack.model;
 
-public class BlackjackDTO {
+public class BlackjackDTO extends MessageDTO {
     private String state;
-    private String message;
-    public BlackjackDTO() {
-    }
 
     public BlackjackDTO(String state, String message) {
+        super(message);
         this.state = state;
-        this.message = message;
     }
 
     public String getState() {
@@ -19,11 +16,4 @@ public class BlackjackDTO {
         this.state = state;
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
 }
