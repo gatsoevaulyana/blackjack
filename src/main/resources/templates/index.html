@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BlackJack</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style type="text/css">
+
+        html {
+            background: url('images/table.png') no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
+
+        .butt {
+            -moz-box-shadow: 4px 6px 30px -4px #260e0e;
+            -webkit-box-shadow: 4px 6px 30px -4px #260e0e;
+            box-shadow: 4px 6px 30px -4px #260e0e;
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #8a2029), color-stop(1, #994040));
+            background: -moz-linear-gradient(top, #8a2029 5%, #994040 100%);
+            background: -webkit-linear-gradient(top, #8a2029 5%, #994040 100%);
+            background: -o-linear-gradient(top, #8a2029 5%, #994040 100%);
+            background: -ms-linear-gradient(top, #8a2029 5%, #994040 100%);
+            background: linear-gradient(to bottom, #8a2029 5%, #994040 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#8a2029', endColorstr='#994040', GradientType=0);
+            background-color: #8a2029;
+            -moz-border-radius: 42px;
+            -webkit-border-radius: 42px;
+            border-radius: 42px;
+            border: 2px solid #8f292d;
+            display: inline-block;
+            cursor: pointer;
+            color: #ffffff;
+            font-family: Trebuchet MS;
+            font-size: 20px;
+            font-weight: bold;
+            padding: 10px 23px;
+            text-decoration: none;
+            text-shadow: 5px 2px 0px #611717;
+        }
+
+        .positionOfUserCards {
+            margin: 0;
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            margin-right: -50%;
+            transform: translate(-50%, -50%)
+        }
+
+        .positionOfDealerCards {
+            margin: 0;
+            position: absolute;
+            top: 27%;
+            left: 50%;
+            margin-right: -50%;
+            transform: translate(-50%, -50%)
+        }
+
+        .positionOfButt {
+            margin: 0;
+            position: absolute;
+            top: 96%;
+            left: 50%;
+            margin-right: -50%;
+            transform: translate(-50%, -50%)
+        }
+
+        .message {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 30px;
+            letter-spacing: 0.2px;
+            word-spacing: 0.2px;
+            color: #FFFFFF;
+            font-weight: normal;
+            text-decoration: none solid rgb(68, 68, 68);
+            font-style: normal;
+            font-variant: small-caps;
+            text-transform: none;
+            top: 2%;
+        }
+
+        p {
+            display: block;
+            margin-top: 15em;
+            margin-bottom: 1em;
+            margin-left: 30em;
+            margin-right: 0;
+
+        }
+
+    </style>
+</head>
+<body>
+<p id="cost" style="color: white; font-size: 2em"></p>
+<div align="center" class="positionOfButt">
+    <a href="#" class="butt" id="help">Help</a>
+    <a href="#" class="butt" id="hit">Hit</a>
+    <a href="#" class="butt" id="stand">Stand</a>
+    <a href="#" class="butt" id="play">Play</a>
+</div>
+<div id="text"></div>
+<div class="message" align="center">
+    <p id="help-text">
+    </p>
+</div>
+
+<div id="costOfUser" class="text">
+</div>
+<div align="center">
+    <div id="cards" align="top" class="positionOfUserCards">
+    </div>
+    <div id="cardsD" align="bottom" class="positionOfDealerCards">
+    </div>
+</div>
+<script>
+    var costOfUserHand = 0;
+    var costOfDealerHand = 0;
+
+
+    $("#play").on('click', function () {
+
+        $.get("http://localhost:8080/play", function (data) {
+            console.log(data.userState);
+            data.userState.forEach(function (el, i, arr) {
+
+                console.log(el);
+                costOfUserHand = costOfUserHand + el.cost;
+                $('#cards')
+                    .append(
+                        '<img id="theImg" width="100" src="http://localhost:8080/images/cards/' + el.values + '_of_'
+                        + el.suit.toLowerCase() + '.png" />')
+
+            });
+            var p;
+            p = document.getElementById('cost');
+            p.innerHTML = p.innerHTML + costOfUserHand;
+            console.log(data.dealerState);
+            data.dealerState.forEach(function (el, i, arr) {
+                console.log(el);
+                costOfDealerHand = costOfDealerHand + el.cost;
+                $('#cardsD')
+                    .append(
+                        '<img id="theImg" width="100" src="http://localhost:8080/images/cards/' + el.values + '_of_'
+                        + el.suit.toLowerCase() + '.png" />')
+
+            });
+        });
+    });
+
+
+    $("#hit").on('click', function () {
+        $.get("http://localhost:8080/more", function (data) {
+            console.log(data.userState);
+            data.userState.forEach(function (el, i, arr) {
+                console.log(el);
+                costOfUserHand = costOfUserHand + el.cost;
+                $('#cards')
+                    .append(
+                        '<img id="theImg" width="100" src="http://localhost:8080/images/cards/' + el.values + '_of_'
+                        + el.suit.toLowerCase() + '.png" />')
+                if (costOfUserHand > 21) {
+                    console.log(data.message);
+                    $("#help-text").text(data.message)
+                }
+
+                p = document.getElementById('cost');
+                p.innerHTML = costOfUserHand;
+            });
+        });
+    });
+
+    $("#stand").on('click', function () {
+        $.get("http://localhost:8080/stop", function (data) {
+            console.log(data.dealerState);
+            $('#cardsD').empty()
+            data.dealerState.forEach(function (el, i, arr) {
+                console.log(el);
+                costOfDealerHand = costOfDealerHand + el.cost;
+                $('#cardsD')
+                    .append(
+                        '<img id="theImg" width="100" src="http://localhost:8080/images/cards/' + el.values + '_of_'
+                        + el.suit.toLowerCase() + '.png" />')
+            });
+            console.log(data.message);
+            $("#help-text").text(data.message)
+        });
+    });
+
+    $("#help").on('click', function () {
+        $.get("/help", function (data) {
+            console.log(data.message);
+
+            $("#help-text").text(data.message)
+        });
+    });
+
+
+</script>
+
+</body>
+</html>

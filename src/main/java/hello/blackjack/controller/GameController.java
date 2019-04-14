@@ -3,6 +3,7 @@ package hello.blackjack.controller;
 
 import hello.blackjack.model.Card;
 import hello.blackjack.model.WinState;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -75,6 +76,22 @@ public class GameController {
         return costOfUserHand <= 21;
     }
 
+    public List<Card> addUserCard() {
+        List<Card> c = new ArrayList<>();
+        c.add(0, deck.get(0));
+        userHand.add(c.get(0));
+        deck.remove(0);
+        return c;
+    }
+
+    public List<Card> addDealerCard() {
+        while (Deck.costOf(dealerHand) < 17) {
+            dealerHand.add(deck.get(0));
+            deck.remove(0);
+        }
+        return dealerHand;
+    }
+
 
     /**
      * Вызывается когда игрок получил все карты и хочет чтобы играло казино (диллер).
@@ -98,31 +115,24 @@ public class GameController {
      */
     public String getState() {
 
-    int dealerCost = Deck.costOf(dealerHand);
-    int userCost = Deck.costOf(userHand);
+        int dealerCost = Deck.costOf(dealerHand);
+        int userCost = Deck.costOf(userHand);
 
-        if(userCost >21)
-
-    {
-        return "LOOSE";
-    }
-        if(dealerCost >21)
-
-    {
+        if (userCost > 21) {
+            return "LOOSE";
+        }
+        if (dealerCost > 21) {
+            return "WIN";
+        }
+        if (userCost < dealerCost) {
+            return "LOOSE";
+        }
+        if (dealerCost == userCost) {
+            return "PUSH";
+        }
         return "WIN";
     }
-        if(userCost<dealerCost)
 
-    {
-        return "LOOSE";
-    }
-        if(dealerCost ==userCost)
-
-    {
-        return "PUSH";
-    }
-        return "WIN";
-}
     public WinState getWinState() {
         int dealerCost = Deck.costOf(dealerHand);
         int userCost = Deck.costOf(userHand);

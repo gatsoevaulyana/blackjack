@@ -46,12 +46,27 @@ public class CommandLineService implements CommandLineInterface {
         return text;
     }
 
+    /*edited*/
     public BlackjackDTO stop() {
         GameController controller = GameController.getInstance();
-        controller.requestStop();
+        List<Card> dealerCards = controller.addDealerCard();
         String text = finishMessage(controller);
-        execute(Command.STOP, controller);
-        return new BlackjackDTO(text, getUserState(), getDealerState());
+//        execute(Command.STOP, controller);
+        return new BlackjackDTO(text, getUserState(), dealerCards);
+    }
+
+
+    /*edited*/
+    public BlackjackDTO more() {
+        GameController controller = GameController.getInstance();
+        controller.addUserCard();
+        String text = "";
+        List<Card> myHand = controller.getMyHand();
+        if (Deck.costOf(myHand) > 21) {
+            text = text + finishMessage(controller);
+            return new BlackjackDTO(text, controller.addUserCard(), getDealerState());
+        }
+        return new BlackjackDTO(text, controller.addUserCard(), getDealerState());
     }
 
     public BlackjackDTO play() {
@@ -64,18 +79,6 @@ public class CommandLineService implements CommandLineInterface {
                 "(C) 2019\n";
 
 
-        return new BlackjackDTO(text, getUserState(), getDealerState());
-    }
-
-    public BlackjackDTO more() {
-        GameController controller = GameController.getInstance();
-        controller.requestMore();
-        String text = "";
-        List<Card> myHand = controller.getMyHand();
-        if (Deck.costOf(myHand) > 21) {
-            text = text + finishMessage(controller);
-            return new BlackjackDTO(text, getUserState(), getDealerState());
-        }
         return new BlackjackDTO(text, getUserState(), getDealerState());
     }
    /* public String getHand(){
@@ -152,8 +155,6 @@ public class CommandLineService implements CommandLineInterface {
 
     private boolean stop(GameController controller) {
         controller.requestStop();
-        output.println("Dealer turn:");
-        output.println();
         printState(controller);
         output.println();
         finishMessage(controller);

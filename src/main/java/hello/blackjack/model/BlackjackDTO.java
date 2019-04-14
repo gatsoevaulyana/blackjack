@@ -4,6 +4,7 @@ import java.util.List;
 
 public class BlackjackDTO extends MessageDTO {
     private List<Card> userState;
+    private List<Card> dealerState;
 
     public BlackjackDTO(String message, List<Card> userState, List<Card> dealerState) {
         super(message);
@@ -26,8 +27,6 @@ public class BlackjackDTO extends MessageDTO {
     public void setDealerState(List<Card> dealerState) {
         this.dealerState = dealerState;
     }
-
-    private List<Card> dealerState;
 
 
 }
