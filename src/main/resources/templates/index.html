@@ -119,35 +119,57 @@
     var costOfUserHand = 0;
     var costOfDealerHand = 0;
 
+    var getUrlParameter = function getUrlParameter(sParam) {
+        var sPageURL = window.location.search.substring(1),
+            sURLVariables = sPageURL.split('&'),
+            sParameterName,
+            i;
+
+        for (i = 0; i < sURLVariables.length; i++) {
+            sParameterName = sURLVariables[i].split('=');
+
+            if (sParameterName[0] === sParam) {
+                return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+            }
+        }
+    };
 
     $("#play").on('click', function () {
+        var username = getUrlParameter('username')
+        $.ajax({
+            url: '/play',
+            headers: {
+                'Username': username,
+            },
+            method: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                console.log(data.userState);
+                data.userState.forEach(function (el, i, arr) {
 
-        $.get("http://localhost:8080/play", function (data) {
-            console.log(data.userState);
-            data.userState.forEach(function (el, i, arr) {
+                    console.log(el);
+                    costOfUserHand = costOfUserHand + el.cost;
+                    $('#cards')
+                        .append(
+                            '<img id="theImg" width="100" src="http://localhost:8080/images/cards/' + el.values + '_of_'
+                            + el.suit.toLowerCase() + '.png" />')
 
-                console.log(el);
-                costOfUserHand = costOfUserHand + el.cost;
-                $('#cards')
-                    .append(
-                        '<img id="theImg" width="100" src="http://localhost:8080/images/cards/' + el.values + '_of_'
-                        + el.suit.toLowerCase() + '.png" />')
+                });
+                var p;
+                p = document.getElementById('cost');
+                p.innerHTML = p.innerHTML + costOfUserHand;
+                console.log(data.dealerState);
+                data.dealerState.forEach(function (el, i, arr) {
+                    console.log(el);
+                    costOfDealerHand = costOfDealerHand + el.cost;
+                    $('#cardsD')
+                        .append(
+                            '<img id="theImg" width="100" src="http://localhost:8080/images/cards/' + el.values + '_of_'
+                            + el.suit.toLowerCase() + '.png" />')
 
-            });
-            var p;
-            p = document.getElementById('cost');
-            p.innerHTML = p.innerHTML + costOfUserHand;
-            console.log(data.dealerState);
-            data.dealerState.forEach(function (el, i, arr) {
-                console.log(el);
-                costOfDealerHand = costOfDealerHand + el.cost;
-                $('#cardsD')
-                    .append(
-                        '<img id="theImg" width="100" src="http://localhost:8080/images/cards/' + el.values + '_of_'
-                        + el.suit.toLowerCase() + '.png" />')
-
-            });
-        });
+                });
+            }
+        })
     });
 
 
