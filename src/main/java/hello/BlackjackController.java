@@ -2,6 +2,7 @@ package hello;
 
 import hello.blackjack.model.BlackjackDTO;
 import hello.blackjack.model.MessageDTO;
+import hello.blackjack.model.StatisticsDTO;
 import hello.blackjack.view.CommandLineInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,18 +23,24 @@ public class BlackjackController {
     }
 
     @GetMapping("/more")
-    public BlackjackDTO more() {
-        return commandLineInterfaceInstance.more();
+    public BlackjackDTO more(@RequestHeader("Username") String username) {
+        return commandLineInterfaceInstance.more(username);
     }
 
     @GetMapping("/stop")
-    public BlackjackDTO stop() {
-        return commandLineInterfaceInstance.stop();
+    public BlackjackDTO stop(@RequestHeader("Username") String username) {
+        return commandLineInterfaceInstance.stop(username);
+    }
+
+    @GetMapping("/stats")
+    public StatisticsDTO getUserStat(@RequestHeader("Username") String username) {
+        return commandLineInterfaceInstance.getStatForUser(username);
     }
 
     @GetMapping("/help")
     public MessageDTO help() {
         return commandLineInterfaceInstance.help();
     }
+
 
 }

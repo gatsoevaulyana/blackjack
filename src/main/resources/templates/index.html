@@ -91,6 +91,15 @@
 
         }
 
+        positionOfStats {
+            margin: 0;
+            position: absolute;
+            top: 96%;
+            left: 40%;
+            margin-right: -50%;
+            transform: translate(-50%, -50%)
+        }
+
     </style>
 </head>
 <body>
@@ -100,13 +109,16 @@
     <a href="#" class="butt" id="hit">Hit</a>
     <a href="#" class="butt" id="stand">Stand</a>
     <a href="#" class="butt" id="play">Play</a>
+    <a href="#" class="butt" id="stats">Get statistics</a>
 </div>
 <div id="text"></div>
-<div class="message" align="center">
+
+<div class="message">
     <p id="help-text">
     </p>
+    <p id="finish-message">
+    </p>
 </div>
-
 <div id="costOfUser" class="text">
 </div>
 <div align="center">
@@ -174,40 +186,62 @@
 
 
     $("#hit").on('click', function () {
-        $.get("http://localhost:8080/more", function (data) {
-            console.log(data.userState);
-            data.userState.forEach(function (el, i, arr) {
-                console.log(el);
-                costOfUserHand = costOfUserHand + el.cost;
-                $('#cards')
-                    .append(
-                        '<img id="theImg" width="100" src="http://localhost:8080/images/cards/' + el.values + '_of_'
-                        + el.suit.toLowerCase() + '.png" />')
-                if (costOfUserHand > 21) {
-                    console.log(data.message);
-                    $("#help-text").text(data.message)
-                }
+        var username = getUrlParameter('username');
 
-                p = document.getElementById('cost');
-                p.innerHTML = costOfUserHand;
-            });
+        $.ajax({
+            url: '/more',
+            headers: {
+                'Username': username
+            },
+            method: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                console.log(data.userState);
+                data.userState.forEach(function (el, i, arr) {
+                    console.log(el);
+                    costOfUserHand = costOfUserHand + el.cost;
+                    $('#cards')
+                        .append(
+                            '<img id="theImg" width="100" src="http://localhost:8080/images/cards/' + el.values + '_of_'
+                            + el.suit.toLowerCase() + '.png" />');
+                    if (costOfUserHand > 21) {
+                        console.log(data.message);
+                        alert(data.message);
+                        $("#finish-message").text(data.message)
+                    }
+
+                    p = document.getElementById('cost');
+                    p.innerHTML = costOfUserHand;
+                });
+            }
         });
     });
 
     $("#stand").on('click', function () {
-        $.get("http://localhost:8080/stop", function (data) {
-            console.log(data.dealerState);
-            $('#cardsD').empty()
-            data.dealerState.forEach(function (el, i, arr) {
-                console.log(el);
-                costOfDealerHand = costOfDealerHand + el.cost;
-                $('#cardsD')
-                    .append(
-                        '<img id="theImg" width="100" src="http://localhost:8080/images/cards/' + el.values + '_of_'
-                        + el.suit.toLowerCase() + '.png" />')
-            });
-            console.log(data.message);
-            $("#help-text").text(data.message)
+
+        var username = getUrlParameter('username')
+        $.ajax({
+            url: '/stop',
+            headers: {
+                'Username': username
+            },
+            method: 'GET',
+            dataType: 'json',
+            success: function (data) {
+
+                console.log(data.dealerState);
+                $('#cardsD').empty()
+                data.dealerState.forEach(function (el, i, arr) {
+                    console.log(el);
+                    costOfDealerHand = costOfDealerHand + el.cost;
+                    $('#cardsD')
+                        .append(
+                            '<img id="theImg" width="100" src="http://localhost:8080/images/cards/' + el.values + '_of_'
+                            + el.suit.toLowerCase() + '.png" />')
+                });
+                console.log(data.message);
+                alert(data.message);
+            }
         });
     });
 
@@ -217,6 +251,9 @@
 
             $("#help-text").text(data.message)
         });
+    });
+    $("#stats").on('click', function () {
+        document.location.href = "/statistic";
     });
 
 

@@ -1,89 +1,102 @@
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Blackjack</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta charset="UTF-8">
+    <title>User</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style type="text/css">
+        input[type="text"] {
+            width: 220px;
+            height: 30px;
+        }
+        input[type=button], input[type=submit], input[type=reset] {
+            -moz-box-shadow: 4px 6px 30px -4px #260e0e;
+            -webkit-box-shadow: 4px 6px 30px -4px #260e0e;
+            box-shadow: 4px 6px 30px -4px #260e0e;
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #8a2029), color-stop(1, #994040));
+            background: -moz-linear-gradient(top, #8a2029 5%, #994040 100%);
+            background: -webkit-linear-gradient(top, #8a2029 5%, #994040 100%);
+            background: -o-linear-gradient(top, #8a2029 5%, #994040 100%);
+            background: -ms-linear-gradient(top, #8a2029 5%, #994040 100%);
+            background: linear-gradient(to bottom, #8a2029 5%, #994040 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#8a2029', endColorstr='#994040', GradientType=0);
+            background-color: #8a2029;
+            -moz-border-radius: 42px;
+            -webkit-border-radius: 42px;
+            border-radius: 42px;
+            border: 2px solid #8f292d;
+            display: inline-block;
+            cursor: pointer;
+            color: #ffffff;
+            font-family: Trebuchet MS;
+            font-size: 20px;
+            font-weight: bold;
+            padding: 10px 23px;
+            text-decoration: none;
+            text-shadow: 5px 2px 0px #611717;
+        }
 
-    <style>
+        html {
+            background: url('images/table.png') no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
+        .center {
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-right: -50%;
+            transform: translate(-50%, -50%)
 
-
-    a.nubex {
-	color: #fff;
-	user-select: none; /* Убираем текстовое выделение */
-	text-decoration: none;	/* Убираем подчеркивание */
-	outline: none; /* Убираем контур вокруг ссылки */
-	background-color: #fa8e47; /* Цвет фона */
-	padding: 1em 2em; /* Отступ от текста до рамки */
-	}
-	a.nubex:active {
-	background-color: #ee6206; /* Цвет кнопки при нажатии */
-	}
-	a.nubex:hover {
-	background-color: #f97f2e; /* Цвет кнопки при наведении курсора */
-	}
-
-
-
-
-
+        }
+        .message {
+            margin: 0;
+            position: absolute;
+            top: 34%;
+            left: 40%;
+            margin-right: -50%;
+            transform: translate(-50%, -50%)
+            font-family: "Times New Roman", Times, serif;
+            font-size: 40px;
+            letter-spacing: 0.2px;
+            word-spacing: 0.2px;
+            color: #FFFFFF;
+            font-weight: normal;
+            text-decoration: none solid rgb(68, 68, 68);
+            font-style: normal;
+            font-variant: small-caps;
+            text-transform: none;
+        }
+        .positionOfInpButt{
+            margin: 0;
+            position: absolute;
+            top: 58%;
+            left: 50%;
+            margin-right: -50%;
+            transform: translate(-50%, -50%)
+        }
 
     </style>
 </head>
 <body>
-<!--<div id="greeting_text">-->
-
-<!--<p th:text="'Hello, ' + ${name} + '!'"/>-->
-<!--<a href="#" class="nubex" id="start">Начать игру</a>-->
-
-<!--</div>-->
-<!--<br/>-->
-
-
-<!--<span id="result"></span> <br/>-->
-<!--<span id="score"></span>-->
-
-
-<!--<span id="start-text"></span>-->
-
-
-<div>
-    <a href="#" class="nubex" id="hide">Toggle visibility card</a> <br><br><br><br><br><br><br>
-    <span id="card"> Queen of Spades</span><br/><br>
+<div class="message" align="center">
+    <p id="input_userName">
+    </p>
 </div>
-<script language="JavaScript">
-          $(document).ready(function(){
-
-$('#hide').on('click', function(){
-
-    $('#card').toggle();
-})
-
-
-
-<!--$.get( "http://localhost:8080/test", function (response) {-->
-    <!--$("#result").text(response.gameResult);-->
-    <!--$("#score").text(response.score);-->
-
-<!--});-->
-
-
-$("#start").on('click', function(){
-    console.log("Btn clicked")
-
-    $.post("http://localhost:8080/play", function(response){
-        console.log("Response from server: ", response)
-
-        $("#start-text").text(response)
-    });
-});
-
-
-
-    });
-
-
-
+<form name="search" >
+    <input type="text" id="txt" class="center" name="key" placeholder=""/>
+    <input type="button" id="inputName" class="positionOfInpButt" name="print" value="OK" />
+</form>
+<script>
+    var p;
+    p = document.getElementById('input_userName');
+    p.innerHTML = p.innerHTML + "Введите ваше имя";
+    $("#inputName").on('click', function () {
+        document.location.href = "/index?username="+document.getElementById("txt").value;
+    })
 </script>
 </body>
 </html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BlackJack</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style type="text/css">
+
+        html {
+            background: url('images/table.png') no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
+
+        .message {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 30px;
+            letter-spacing: 0.2px;
+            word-spacing: 0.2px;
+            color: #FFFFFF;
+            font-weight: normal;
+            text-decoration: none solid rgb(68, 68, 68);
+            font-style: normal;
+            font-variant: small-caps;
+            text-transform: none;
+            top: 2%;
+        }
+
+        p {
+            display: block;
+            margin-top: 15em;
+            margin-bottom: 1em;
+            margin-left: 30em;
+            margin-right: 0;
+
+        }
+    </style>
+</head>
+<body>
+<div class="message">
+    <p id="stats_text">
+    </p>
+</div>
+<div id="stats" align="top" class="positionOfUserCards">
+</div>
+<script>
+    $.get("/stats", function (data) {
+        console.log(data.statistics);
+        data.statistics.forEach(function (el, i, arr) {
+
+            console.log(el);
+            $('#stats')
+                .append(
+                    $("#stats_text").text(data.statistics))
+
+        });
+    });
+</script>
+</body>
+</html>

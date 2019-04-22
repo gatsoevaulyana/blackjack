@@ -3,13 +3,13 @@ package hello.blackjack.view;
 
 import hello.blackjack.controller.Deck;
 import hello.blackjack.controller.GameController;
-import hello.blackjack.model.BlackjackDTO;
-import hello.blackjack.model.Card;
-import hello.blackjack.model.MessageDTO;
-import hello.blackjack.model.WinState;
+import hello.blackjack.dao.Statistics;
+import hello.blackjack.dao.StatisticsServiceI;
+import hello.blackjack.model.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.PrintStream;
+import java.io.*;
 import java.util.List;
 import java.util.Scanner;
 
@@ -20,8 +20,11 @@ public class CommandLineService implements CommandLineInterface {
     private static final String LOSE_MSG = "Sorry, today is not your day. You loose.";
     private static final String PUSH_MSG = "Push. Everybody has equal amount of points.";
     private static final String WIN_MSG = "Congrats! You win!";
+    @Autowired
+    StatisticsServiceI statisticsService;
     private Scanner scanner;
     private PrintStream output;
+
 
     public CommandLineService() {
 //        this.scanner = new Scanner(input);
@@ -46,8 +49,7 @@ public class CommandLineService implements CommandLineInterface {
         return text;
     }
 
-    /*edited*/
-    public BlackjackDTO stop() {
+    public BlackjackDTO stop(String username) {
         GameController controller = GameController.getInstance();
         List<Card> dealerCards = controller.addDealerCard();
         String text = finishMessage(controller);
@@ -55,14 +57,18 @@ public class CommandLineService implements CommandLineInterface {
         return new BlackjackDTO(text, getUserState(), dealerCards);
     }
 
+    @Override
+    public StatisticsDTO getStatForUser(String username) {
+        return new StatisticsDTO(statisticsService.getStatForUser(username));
+    }
 
-    /*edited*/
-    public BlackjackDTO more() {
+    public BlackjackDTO more(String username) {
         GameController controller = GameController.getInstance();
         controller.addUserCard();
         String text = "";
         List<Card> myHand = controller.getMyHand();
         if (Deck.costOf(myHand) > 21) {
+            statisticsService.save(myHand, WinState.LOOSE, username);
             text = text + finishMessage(controller);
             return new BlackjackDTO(text, controller.addUserCard(), getDealerState());
         }
@@ -81,10 +87,6 @@ public class CommandLineService implements CommandLineInterface {
 
         return new BlackjackDTO(text, getUserState(), getDealerState());
     }
-   /* public String getHand(){
-
-    }
-    */
 
     /**
      * Выполняем команду, переданную с консоли. Список разрешенных комманд можно найти в классе {@link Command}.
@@ -183,28 +185,9 @@ public class CommandLineService implements CommandLineInterface {
         if (winState == WinState.PUSH) {
             return PUSH_MSG;
         }
-        if (winState == WinState.LOOSE) {
-            return LOSE_MSG;
-        }
-
         return WIN_MSG;
     }
 
-    public String finishMessage() {
-        GameController controller = GameController.getInstance();
-        WinState winState = controller.getWinState();
-        if (winState == WinState.LOOSE) {
-            return LOSE_MSG;
-        }
-        if (winState == WinState.PUSH) {
-            return PUSH_MSG;
-        }
-        if (winState == WinState.LOOSE) {
-            return LOSE_MSG;
-        }
-
-        return WIN_MSG;
-    }
 
     public MessageDTO help() {
         return new MessageDTO("Usage: \n" +

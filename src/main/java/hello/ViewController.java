@@ -19,4 +19,8 @@ public class ViewController {
         return "index";
     }
 
+    @GetMapping("/statistic")
+    public String stats() {
+        return "statistic";
+    }
 }
