@@ -9,7 +9,7 @@ import hello.blackjack.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.PrintStream;
 import java.util.List;
 import java.util.Scanner;
 
@@ -52,6 +52,7 @@ public class CommandLineService implements CommandLineInterface {
     public BlackjackDTO stop(String username) {
         GameController controller = GameController.getInstance();
         List<Card> dealerCards = controller.addDealerCard();
+        statisticsService.save(new Statistics(getUserState(), controller.getWinState()), username);
         String text = finishMessage(controller);
 //        execute(Command.STOP, controller);
         return new BlackjackDTO(text, getUserState(), dealerCards);
@@ -59,7 +60,7 @@ public class CommandLineService implements CommandLineInterface {
 
     @Override
     public StatisticsDTO getStatForUser(String username) {
-        return new StatisticsDTO(statisticsService.getStatForUser(username));
+        return new StatisticsDTO(statisticsService.load(username));
     }
 
     public BlackjackDTO more(String username) {
@@ -68,7 +69,7 @@ public class CommandLineService implements CommandLineInterface {
         String text = "";
         List<Card> myHand = controller.getMyHand();
         if (Deck.costOf(myHand) > 21) {
-            statisticsService.save(myHand, WinState.LOOSE, username);
+            statisticsService.save(new Statistics(myHand, WinState.LOOSE), username);
             text = text + finishMessage(controller);
             return new BlackjackDTO(text, controller.addUserCard(), getDealerState());
         }

@@ -1,36 +1,51 @@
 package hello.blackjack.dao;
 
-import hello.blackjack.model.Card;
-import hello.blackjack.model.WinState;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class StatisticsServiceImplementation implements StatisticsServiceI {
 
-    private Map<String, List<Statistics>> statisticsMap = new HashMap<>();
 
     @Override
-    public void save(List<Card> state, WinState winstate, String username) {
-        List<Statistics> statistics = this.statisticsMap.get(username);
-        Statistics stat = null;
-        if (statistics == null) {
-            statistics = new ArrayList<>();
-            statistics.add(stat);
-            this.statisticsMap.put(username, statistics);
+    public void save(Statistics stat, String username) {
+        List<Statistics> statFromFile = load(username);
+        if (statFromFile != null) {
+            statFromFile.add(stat);
+
         } else {
-            statistics.add(stat);
-            this.statisticsMap.put(username, statistics);
+            statFromFile = new ArrayList<>();
+            statFromFile.add(stat);
+
+        }
+        try {
+            FileOutputStream fos = new FileOutputStream(username);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(statFromFile);
+            oos.close();
+        } catch (IOException e) {
+            System.out.println(e);
         }
     }
 
     @Override
-    public List<Statistics> getStatForUser(String username) {
-        return this.statisticsMap.get(username);
+    public List<Statistics> load(String username) {
+        File f = new File(username);
+        if (f.exists() && !f.isDirectory()) {
+            try {
+                FileInputStream fis = new FileInputStream(f);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                return (List<Statistics>) ois.readObject();
+            } catch (IOException | ClassNotFoundException ex) {
+                System.out.println(ex);
+                return null;
+            }
+        } else {
+            return null;
+        }
     }
+
 }
