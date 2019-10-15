@@ -66,30 +66,20 @@ public class GameController {
      *
      * @return true если сумма очков у игрока меньше максимума (или равна) после всех операций и false если больше.
      */
-    public boolean requestMore() {
-        if (Deck.costOf(userHand) >= 21 || deck.isEmpty()) {
-            return false;
-        }
+
+    public List<Card> addUserCard(List<Card> s) {
+        s.add(deck.get(0));
         userHand.add(deck.get(0));
         deck.remove(0);
-        int costOfUserHand = Deck.costOf(userHand);
-        return costOfUserHand <= 21;
+        return s;
     }
 
-    public List<Card> addUserCard() {
-        List<Card> c = new ArrayList<>();
-        c.add(0, deck.get(0));
-        userHand.add(c.get(0));
+    public List<Card> addDealerCard(List<Card> s) {
+
+        dealerHand.add(deck.get(0));
+        s.add(deck.get(0));
         deck.remove(0);
-        return c;
-    }
-
-    public List<Card> addDealerCard() {
-        while (Deck.costOf(dealerHand) < 17) {
-            dealerHand.add(deck.get(0));
-            deck.remove(0);
-        }
-        return dealerHand;
+        return s;
     }
 
 
@@ -97,14 +87,6 @@ public class GameController {
      * Вызывается когда игрок получил все карты и хочет чтобы играло казино (диллер).
      * Сдаем диллеру карты пока у диллера не наберется 17 очков.
      */
-    public void requestStop() {
-        int costOfDealerHand = 0;
-        while (costOfDealerHand < 17) {
-            dealerHand.add(deck.get(0));
-            deck.remove(0);
-            costOfDealerHand = Deck.costOf(dealerHand);
-        }
-    }
 
     /**
      * Сравниваем руку диллера и руку игрока.
@@ -113,25 +95,7 @@ public class GameController {
      * Если очки равны - это пуш (WinState.PUSH)
      * Если у игрока больше чем у диллера и не перебор - это WinState.WIN (игрок выиграл).
      */
-    public String getState() {
 
-        int dealerCost = Deck.costOf(dealerHand);
-        int userCost = Deck.costOf(userHand);
-
-        if (userCost > 21) {
-            return "LOOSE";
-        }
-        if (dealerCost > 21) {
-            return "WIN";
-        }
-        if (userCost < dealerCost) {
-            return "LOOSE";
-        }
-        if (dealerCost == userCost) {
-            return "PUSH";
-        }
-        return "WIN";
-    }
 
     public WinState getWinState() {
         int dealerCost = Deck.costOf(dealerHand);
@@ -143,8 +107,11 @@ public class GameController {
         if (dealerCost > 21) {
             return WinState.WIN;
         }
-        if (userCost < dealerCost) {
+        if (userCost < dealerCost && dealerCost <= 21) {
             return WinState.LOOSE;
+        }
+        if (userCost > dealerCost) {
+            return WinState.WIN;
         }
         if (dealerCost == userCost) {
             return WinState.PUSH;

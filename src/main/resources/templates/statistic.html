@@ -14,6 +14,15 @@
             background-size: cover;
         }
 
+        .positionOfButt {
+            margin: 0;
+            position: absolute;
+            top: 96%;
+            left: 50%;
+            margin-right: -50%;
+            transform: translate(-50%, -50%)
+        }
+
         .message {
             font-family: "Times New Roman", Times, serif;
             font-size: 30px;
@@ -39,22 +48,64 @@
     </style>
 </head>
 <body>
+<div align="center" class="positionOfButt">
+    <a href="#" class="butt" id="statt">Get statistics</a>
+</div>
+<div id="text"></div>
 <div class="message">
     <p id="stats_text">
     </p>
 </div>
+<div id="space">
+    <br/>
+</div>
 <div id="stats" align="top" class="positionOfUserCards">
 </div>
 <script>
-    $.get("/stats", function (data) {
-        console.log(data.statistics);
-        data.statistics.forEach(function (el, i, arr) {
+    var getUrlParameter = function getUrlParameter(sParam) {
+        var sPageURL = window.location.search.substring(1),
+            sURLVariables = sPageURL.split('&'),
+            sParameterName,
+            i;
 
-            console.log(el);
-            $('#stats')
-                .append(
-                    $("#stats_text").text(data.statistics))
+        for (i = 0; i < sURLVariables.length; i++) {
+            sParameterName = sURLVariables[i].split('=');
 
+            if (sParameterName[0] === sParam) {
+                return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+            }
+        }
+    };
+
+    $("#statt").on('click', function () {
+
+        var username = getUrlParameter('username');
+        $.ajax({
+            url: '/stats',
+            headers: {
+                'Username': username
+            },
+            method: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                console.log(data.statistics);
+                data.statistics.forEach(function (el, i, arr) {
+                    console.log(el);
+
+                    el.cards.forEach(function (ell, i, arr) {
+                        console.log(ell);
+                        $('#stats')
+                            .append(
+                                '<img id="theImg" width="100" src="http://localhost:8080/images/cards/' + ell.values + '_of_'
+                                + ell.suit.toLowerCase() + '.png" />')
+                    })
+                    $('#stats')
+                        .append(
+                            el.winState);
+                    $('#space')
+                });
+
+            }
         });
     });
 </script>

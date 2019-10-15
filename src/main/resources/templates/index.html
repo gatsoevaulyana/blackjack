@@ -82,16 +82,58 @@
             top: 2%;
         }
 
-        p {
-            display: block;
-            margin-top: 15em;
-            margin-bottom: 1em;
-            margin-left: 30em;
-            margin-right: 0;
+
+        .positionOfDealerCost {
+            margin: 0;
+            position: absolute;
+            top: 20%;
+            left: 75%;
+        }
+
+        .positionOfUserCost {
+            margin: 0;
+            position: absolute;
+            top: 63%;
+            left: 75%;
+        }
+
+        .positionOfDealerStatus {
+            margin: 0;
+            position: absolute;
+            top: 25%;
+            left: 25%;
+            font-family: "Times New Roman", Times, serif;
+            font-size: 30px;
+            letter-spacing: 0.2px;
+            word-spacing: 0.2px;
+            color: #FFFFFF;
+            font-weight: normal;
+            text-decoration: none solid rgb(68, 68, 68);
+            font-style: normal;
+            font-variant: small-caps;
+            text-transform: none;
 
         }
 
-        positionOfStats {
+        .positionOfUserStatus {
+            margin: 0;
+            position: absolute;
+            top: 68%;
+            left: 25%;
+            font-family: "Times New Roman", Times, serif;
+            font-size: 30px;
+            letter-spacing: 0.2px;
+            word-spacing: 0.2px;
+            color: #FFFFFF;
+            font-weight: normal;
+            text-decoration: none solid rgb(68, 68, 68);
+            font-style: normal;
+            font-variant: small-caps;
+            text-transform: none;
+
+        }
+
+        .positionOfStats {
             margin: 0;
             position: absolute;
             top: 96%;
@@ -103,7 +145,14 @@
     </style>
 </head>
 <body>
-<p id="cost" style="color: white; font-size: 2em"></p>
+<div class="positionOfUserCost">
+    <p id="costOfU" style="color: white; font-size: 2em"></p>
+</div>
+
+<div class="positionOfDealerCost">
+    <p id="costOfD" style="color: white; font-size: 2em"></p>
+</div>
+
 <div align="center" class="positionOfButt">
     <a href="#" class="butt" id="help">Help</a>
     <a href="#" class="butt" id="hit">Hit</a>
@@ -113,12 +162,17 @@
 </div>
 <div id="text"></div>
 
-<div class="message">
+<div class="message" align="center">
     <p id="help-text">
     </p>
     <p id="finish-message">
     </p>
 </div>
+<div id="dealerStatus" class="positionOfDealerStatus">
+</div>
+<div id="userStatus" class="positionOfUserStatus">
+</div>
+
 <div id="costOfUser" class="text">
 </div>
 <div align="center">
@@ -128,6 +182,8 @@
     </div>
 </div>
 <script>
+
+
     var costOfUserHand = 0;
     var costOfDealerHand = 0;
 
@@ -151,11 +207,31 @@
         $.ajax({
             url: '/play',
             headers: {
-                'Username': username,
+                'Username': username
             },
             method: 'GET',
             dataType: 'json',
             success: function (data) {
+
+                var userStatus;
+                userStatus = document.getElementById('userStatus');
+                userStatus.innerHTML = "You";
+
+                var dealerStatus;
+                dealerStatus = document.getElementById('dealerStatus');
+                dealerStatus.innerHTML = "Dealer";
+
+                document.getElementById('play').text = "Replay";
+                $("#finish-message").empty();
+                $("#help-text").empty();
+                $('#cards').empty();
+                $('#cardsD').empty();
+                $('#costOfD').empty();
+                $('#costOfU').empty();
+
+                costOfDealerHand = 0;
+                costOfUserHand = 0;
+
                 console.log(data.userState);
                 data.userState.forEach(function (el, i, arr) {
 
@@ -167,9 +243,7 @@
                             + el.suit.toLowerCase() + '.png" />')
 
                 });
-                var p;
-                p = document.getElementById('cost');
-                p.innerHTML = p.innerHTML + costOfUserHand;
+
                 console.log(data.dealerState);
                 data.dealerState.forEach(function (el, i, arr) {
                     console.log(el);
@@ -180,6 +254,14 @@
                             + el.suit.toLowerCase() + '.png" />')
 
                 });
+                var p;
+                p = document.getElementById('costOfU');
+                p.innerHTML = p.innerHTML + costOfUserHand;
+
+
+                var s;
+                s = document.getElementById('costOfD');
+                s.innerHTML = s.innerHTML + costOfDealerHand;
             }
         })
     });
@@ -196,6 +278,7 @@
             method: 'GET',
             dataType: 'json',
             success: function (data) {
+                $("#help-text").empty();
                 console.log(data.userState);
                 data.userState.forEach(function (el, i, arr) {
                     console.log(el);
@@ -206,11 +289,11 @@
                             + el.suit.toLowerCase() + '.png" />');
                     if (costOfUserHand > 21) {
                         console.log(data.message);
-                        alert(data.message);
+                        //alert(data.message);
                         $("#finish-message").text(data.message)
                     }
 
-                    p = document.getElementById('cost');
+                    p = document.getElementById('costOfU');
                     p.innerHTML = costOfUserHand;
                 });
             }
@@ -228,9 +311,10 @@
             method: 'GET',
             dataType: 'json',
             success: function (data) {
-
+                $("#help-text").empty();
                 console.log(data.dealerState);
-                $('#cardsD').empty()
+                /*$('#cardsD').empty()
+                costOfDealerHand=0;*/
                 data.dealerState.forEach(function (el, i, arr) {
                     console.log(el);
                     costOfDealerHand = costOfDealerHand + el.cost;
@@ -239,8 +323,12 @@
                             '<img id="theImg" width="100" src="http://localhost:8080/images/cards/' + el.values + '_of_'
                             + el.suit.toLowerCase() + '.png" />')
                 });
+                s = document.getElementById('costOfD');
+                s.innerHTML = costOfDealerHand;
+
                 console.log(data.message);
-                alert(data.message);
+                $("#finish-message").text(data.message)
+                // alert(data.message);
             }
         });
     });
@@ -252,8 +340,13 @@
             $("#help-text").text(data.message)
         });
     });
+
     $("#stats").on('click', function () {
-        document.location.href = "/statistic";
+
+        var username = getUrlParameter('username');
+        document.location.href = "/statistic?username=" + username;
+
+
     });
 
 

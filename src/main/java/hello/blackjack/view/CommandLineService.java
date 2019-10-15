@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -27,35 +28,21 @@ public class CommandLineService implements CommandLineInterface {
 
 
     public CommandLineService() {
-//        this.scanner = new Scanner(input);
         this.output = System.out;
     }
 
-    public String getStateAfterMore() {
-        GameController controller = GameController.getInstance();
-        controller.requestMore();
-        String text = printState(controller);
-        return text;
-    }
 
-    public String finishMessageAfterMore() {
-        GameController controller = GameController.getInstance();
-        List<Card> myHand = controller.getMyHand();
-        String text = "";
-        if (Deck.costOf(myHand) > 21) {
-            text = finishMessage(controller);
-
-        }
-        return text;
-    }
 
     public BlackjackDTO stop(String username) {
         GameController controller = GameController.getInstance();
-        List<Card> dealerCards = controller.addDealerCard();
+        List<Card> s = new ArrayList<>();
+        while (Deck.costOf(controller.getDealersHand()) < 17) {
+            controller.addDealerCard(s);
+        }
+        String text = "";
         statisticsService.save(new Statistics(getUserState(), controller.getWinState()), username);
-        String text = finishMessage(controller);
-//        execute(Command.STOP, controller);
-        return new BlackjackDTO(text, getUserState(), dealerCards);
+        text = finishMessage(controller);
+        return new BlackjackDTO(text, getUserState(), s);
     }
 
     @Override
@@ -65,15 +52,16 @@ public class CommandLineService implements CommandLineInterface {
 
     public BlackjackDTO more(String username) {
         GameController controller = GameController.getInstance();
-        controller.addUserCard();
+        List<Card> s = new ArrayList<>();
+        controller.addUserCard(s);
         String text = "";
         List<Card> myHand = controller.getMyHand();
         if (Deck.costOf(myHand) > 21) {
             statisticsService.save(new Statistics(myHand, WinState.LOOSE), username);
             text = text + finishMessage(controller);
-            return new BlackjackDTO(text, controller.addUserCard(), getDealerState());
+            return new BlackjackDTO(text, s, getDealerState());
         }
-        return new BlackjackDTO(text, controller.addUserCard(), getDealerState());
+        return new BlackjackDTO(text, s, getDealerState());
     }
 
     public BlackjackDTO play() {
@@ -127,56 +115,8 @@ public class CommandLineService implements CommandLineInterface {
      * <p/>
      * Постарайтесь уделить внимание чистоте кода и разделите этот метод на несколько подметодов.
      */
-    private boolean execute(String command, GameController controller) {
-        if (command.equals(Command.HELP)) {
-            getHelp();
-        }
-        if (command.equals(Command.MORE)) {
-            getMore(controller);
-        }
-        if (command.equals(Command.STOP)) {
-            stop(controller);
-        }
-        if (command.equals(Command.EXIT)) {
-
-            return false;
-        }
-        return true;
-    }
 
 
-    private boolean getMore(GameController controller) {
-        controller.requestMore();
-        printState(controller);
-        List<Card> myHand = controller.getMyHand();
-        if (Deck.costOf(myHand) > 21) {
-            finishMessage(controller);
-            return false;
-        }
-        return true;
-    }
-
-    private boolean stop(GameController controller) {
-        controller.requestStop();
-        printState(controller);
-        output.println();
-        finishMessage(controller);
-
-        return false;
-    }
-
-    public String getStateAfterStop() {
-        GameController controller = GameController.getInstance();
-        controller.requestStop();
-        String text = "Dealer turn:" + printState(controller);
-        return text;
-    }
-
-    public String getWinState() {
-        GameController controller = GameController.getInstance();
-        String s = controller.getWinState().toString();
-        return s;
-    }
 
     public String finishMessage(GameController controller) {
         WinState winState = controller.getWinState();
@@ -192,15 +132,12 @@ public class CommandLineService implements CommandLineInterface {
 
     public MessageDTO help() {
         return new MessageDTO("Usage: \n" +
-                "\thelp - prints this message\n" +
-                "\thit - requests one more card\n" +
-                "\tstand - I'm done - lets finish\n" +
+                "\thelp - prints this message, \n" +
+                "\thit - requests one more card, \n" +
+                "\tstand - I'm done - lets finish, \n" +
                 "\texit - exits game");
     }
 
-    private void getHelp() {
-        output.println(help());
-    }
 
     private String format(List<Card> hand) {
         String result = "";
@@ -221,11 +158,6 @@ public class CommandLineService implements CommandLineInterface {
         return text;
     }
 
-    public String getState() {
-        GameController controller = GameController.getInstance();
-        String text = controller.getState();
-        return text;
-    }
 
     public List<Card> getUserState() {
         GameController controller = GameController.getInstance();

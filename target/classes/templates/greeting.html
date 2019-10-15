@@ -9,6 +9,7 @@
             width: 220px;
             height: 30px;
         }
+
         input[type=button], input[type=submit], input[type=reset] {
             -moz-box-shadow: 4px 6px 30px -4px #260e0e;
             -webkit-box-shadow: 4px 6px 30px -4px #260e0e;
@@ -43,6 +44,7 @@
             -o-background-size: cover;
             background-size: cover;
         }
+
         .center {
             margin: 0;
             position: absolute;
@@ -52,6 +54,7 @@
             transform: translate(-50%, -50%)
 
         }
+
         .message {
             margin: 0;
             position: absolute;
@@ -70,7 +73,8 @@
             font-variant: small-caps;
             text-transform: none;
         }
-        .positionOfInpButt{
+
+        .positionOfInpButt {
             margin: 0;
             position: absolute;
             top: 58%;
@@ -86,16 +90,16 @@
     <p id="input_userName">
     </p>
 </div>
-<form name="search" >
+<form name="search">
     <input type="text" id="txt" class="center" name="key" placeholder=""/>
-    <input type="button" id="inputName" class="positionOfInpButt" name="print" value="OK" />
+    <input type="button" id="inputName" class="positionOfInpButt" name="print" value="OK"/>
 </form>
 <script>
     var p;
     p = document.getElementById('input_userName');
-    p.innerHTML = p.innerHTML + "Введите ваше имя";
+    p.innerHTML = p.innerHTML + "Enter your name";
     $("#inputName").on('click', function () {
-        document.location.href = "/index?username="+document.getElementById("txt").value;
+        document.location.href = "/index?username=" + document.getElementById("txt").value;
     })
 </script>
 </body>
